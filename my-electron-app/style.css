@@ -1,29 +1,74 @@
 .grid {
     display: grid;
-    background-color: #000;
-    margin: 3px;
-    grid-template-rows: repeat(3, 155px);
-    grid-template-columns: repeat(3, 155px);
-    width: 468px;
-    height: 468px;
+    background-color: black;
+    margin: 5px;
+    grid-template-rows: repeat(3, 153px);
+    grid-template-columns: repeat(3, 153px);
+    width: 476px;
+    height: 476px;
+    border-radius: 3px;
+    gap: 4px;
 }
 
 .subgrid {
-    gap: 1px;
-    background-color: black;
+    gap: 2px;
     width: auto;
     height: auto;
-    grid-template-rows: repeat(3, 50px);
-    grid-template-columns: repeat(3, 50px);
+    grid-template-rows: repeat(3, 49px);
+    grid-template-columns: repeat(3, 49px);
 }
 
 .cell {
     background-color: white;
-    border: 1px solid #222;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 3px;
+}
+
+.board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+button {
+    background: black;
+    color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-top: 10px;
+    width: 100px;
+    height: 40px;
+}
+
+button:hover {
+    animation-name: hover;
+    animation-duration: .2s;
+    animation-fill-mode: forwards;
+}
+
+button:not(:hover) {
+    animation-name: unhover;
+    animation-duration: .2s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes unhover {
+    from {
+        transform: scale(1.1);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+button:active {
+    animation-name: press;
+    animation-duration: .2s;
 }
 
 body {
@@ -32,6 +77,26 @@ body {
     font-family: monospace;
     font-size: 16px;
     line-height: 1.2;
+}
+
+@keyframes hover {
+    to {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes press {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(.9);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 h1 {
