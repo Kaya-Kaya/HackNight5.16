@@ -1,10 +1,10 @@
 import numpy as np
 import random
 from scipy.optimize import linprog
+given_numbers = []
 #Cell Constraint
 A_cell = np.zeros((81, 729)) # 81 x 729 matrix of zeros
 b_cell = np.ones(81) # 81 x 1 matrix of ones
-given_numbers = []
 
 for i in range(9):
     for j in range(9):
@@ -46,16 +46,53 @@ for box_x in range(3):
                     cell_y = box_y * 3 + j
                     col = cell_x * 81 + cell_y * 9 + k  # Variable index
                     A_box[row, col] = 1
-#Pre-filled numbers constraint
-A_fixed = np.zeros((len(given_numbers), 729))  
-b_fixed = np.ones(len(given_numbers))  
+def solve_simplex():
 
-for idx, (r, c, v) in enumerate(given_numbers):
-    col = r * 81 + c * 9 + (v - 1)
-    A_fixed[idx, col] = 1
-#Combine all constraints
-A = np.vstack((A_cell, A_row, A_col, A_box, A_fixed))
-b = np.hstack((b_cell, b_row, b_col, b_box, b_fixed))
+    #Pre-filled numbers constraint
+    A_fixed = np.zeros((len(given_numbers), 729))  
+    b_fixed = np.ones(len(given_numbers))  
+    
+    print(given_numbers)
+    
+    for idx, (r, c, v) in enumerate(given_numbers):
+        col = r * 81 + c * 9 + (v - 1)
+        A_fixed[idx, col] = 1
+    #Combine all constraints
+    A = np.vstack((A_cell, A_row, A_col, A_box, A_fixed))
+    b = np.hstack((b_cell, b_row, b_col, b_box, b_fixed))
+    
+    result = linprog(c=np.zeros(729), A_eq=A, b_eq=b, method="highs")
+    if not result.success:
+        print("Initial linear programming problem did not succeed.")
+        generate();
+        solve_simplex();
+        return;
+    first_solution = np.round(result.x).astype(int)
+    
+    if not np.all(np.isclose(result.x, np.round(result.x))):
+        print("Fractional values found. The puzzle has multiple solutions.")
+        generate();
+        solve_simplex();
+        return;
+    
+    A_exclude = np.zeros((1, 729))  # New constraint row
+    b_exclude = np.array([1])  # At least one number must be different
+
+    for i in range(729):
+        if first_solution[i] == 1:
+            A_exclude[0, i] = 1  # Ensuring at least one is different
+
+    # Add to the constraints
+    A_new = np.vstack((A, A_exclude))
+    b_new = np.hstack((b, b_exclude))
+    
+    result2 = linprog(c=np.zeros(729), A_eq=A_new, b_eq=b_new, method="highs")
+    if not result2.success:
+        print("Second linear programming problem did not succeed.")
+        generate();
+        solve_simplex();
+        return;
+    print(result2)
 
 def is_valid_move(board, row, col, num):
     """Check if num can be placed in board[row][col] without breaking Sudoku rules."""
@@ -88,6 +125,7 @@ def solve_board(board):
     return True  
 
 def generate(empty_cells = 40):
+    given_numbers.clear()
     board = np.zeros((9, 9), dtype=int)
     for i in range(0, 9, 3):
         nums = random.sample(range(1, 10), 9)
@@ -108,3 +146,4 @@ def generate(empty_cells = 40):
     return board
 
 generate()
+solve_simplex()
