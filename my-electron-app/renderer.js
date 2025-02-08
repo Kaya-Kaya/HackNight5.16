@@ -10,5 +10,4 @@ generateButton.addEventListener('click', async () => {
             cells[j].innerText = board[i][j];
         }
     }
-    console.log(board);
 });
