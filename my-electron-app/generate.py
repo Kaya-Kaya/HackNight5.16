@@ -101,8 +101,8 @@ def generate(empty_cells = 40):
         row, col = divmod(cells.pop(), 9)
         board[row, col] = 0
     print(board)
-    for row in range(board.shape[0]):
-        for col in range(board.shape[1]):
+    for row in range(9):
+        for col in range(9):
             if board[row, col] != 0:
                 given_numbers.append((row, col, int(board[row, col])))
     return board
