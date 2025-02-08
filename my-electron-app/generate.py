@@ -99,10 +99,12 @@ def generate(empty_cells = 40):
     random.shuffle(cells)
     for i in range(empty_cells):
         row, col = divmod(cells.pop(), 9)
-        val = board[row, col]
-        given_numbers.append((row, col, val))
         board[row, col] = 0
     print(board)
+    for row in range(board.shape[0]):
+        for col in range(board.shape[1]):
+            if board[row, col] != 0:
+                given_numbers.append((row, col, int(board[row, col])))
     return board
 
 generate()
