@@ -1,0 +1,39 @@
+.grid {
+    display: grid;
+    background-color: #000;
+    margin: 3px;
+    grid-template-rows: repeat(3, 155px);
+    grid-template-columns: repeat(3, 155px);
+    width: 468px;
+    height: 468px;
+}
+
+.subgrid {
+    gap: 1px;
+    background-color: black;
+    width: auto;
+    height: auto;
+    grid-template-rows: repeat(3, 50px);
+    grid-template-columns: repeat(3, 50px);
+}
+
+.cell {
+    background-color: white;
+    border: 1px solid #222;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body {
+    background: #fff;
+    color: #000;
+    font-family: monospace;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+h1 {
+    text-align: center;
+}
