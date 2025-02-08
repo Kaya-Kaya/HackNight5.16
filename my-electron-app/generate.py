@@ -2,7 +2,7 @@ import numpy as np
 import random
 from scipy.optimize import linprog
 given_numbers = []
-#Cell Constraint
+# Cell Constraint
 A_cell = np.zeros((81, 729)) # 81 x 729 matrix of zeros
 b_cell = np.ones(81) # 81 x 1 matrix of ones
 
@@ -12,7 +12,7 @@ for i in range(9):
         for k in range(9):
             col = 81 * i + 9 * j + k
             A_cell[row, col] = 1
-#Row Constraint
+# Row Constraint
 A_row = np.zeros((81, 729)) # 81 x 729 matrix of zeros
 b_row = np.ones(81) # 81 x 1 matrix of ones
 
@@ -20,9 +20,9 @@ for i in range(9):
     for k in range(9):
         row = i * 9  + k
         for j in range(9):
-            col = 81 * i + 9 * j + k
+            col = i * 81 + j * 9 + k
             A_row[row, col] = 1
-#Column Constraint       
+# Column Constraint       
 A_col = np.zeros((81, 729)) # 81 x 729 matrix of zeros
 b_col = np.ones(81) # 81 x 1 matrix of ones
 
@@ -30,9 +30,9 @@ for j in range(9):
     for k in range(9):
         row = j * 9  + k
         for i in range(9):
-            col = 81 * i + 9 * j + k
+            col = i * 81 + j * 9 + k
             A_col[row, col] = 1
-#Box Constraint
+# Box Constraint
 A_box = np.zeros((81, 729))  # 81 constraints (9 boxes × 9 numbers)
 b_box = np.ones(81)
 
@@ -87,7 +87,7 @@ def solve_simplex():
     b_new = np.hstack((b, b_exclude))
     
     result2 = linprog(c=np.zeros(729), A_eq=A_new, b_eq=b_new, method="highs")
-    if not result2.success:
+    if result2.success:
         print("Second linear programming problem did not succeed.")
         generate()
         solve_simplex()
