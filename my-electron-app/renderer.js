@@ -7,7 +7,7 @@ generateButton.addEventListener('click', async () => {
     for (let i = 0; i < subgrids.length; i++) {
         const cells = subgrids[i].getElementsByClassName('cell');
         for (let j = 0; j < cells.length; j++) {
-            cells[j].innerText = board[i][j];
+            cells[j].innerText = board[i][j] == 0 ? '' : board[i][j];
         }
     }
 });
