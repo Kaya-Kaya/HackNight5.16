@@ -6,6 +6,16 @@
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "build": {
+    "files": [
+      "dist/test",
+      "main.js",
+      "preload.js",
+      "index.html",
+      "renderer.js",
+      "style.css"
+    ]
+  },
   "author": "",
   "license": "MIT",
   "description": "",
