@@ -64,16 +64,16 @@ def solve_simplex():
     result = linprog(c=np.zeros(729), A_eq=A, b_eq=b, method="highs")
     if not result.success:
         print("Initial linear programming problem did not succeed.")
-        generate();
-        solve_simplex();
-        return;
+        generate()
+        solve_simplex()
+        return
     first_solution = np.round(result.x).astype(int)
     
     if not np.all(np.isclose(result.x, np.round(result.x))):
         print("Fractional values found. The puzzle has multiple solutions.")
-        generate();
-        solve_simplex();
-        return;
+        generate()
+        solve_simplex()
+        return
     
     A_exclude = np.zeros((1, 729))  # New constraint row
     b_exclude = np.array([1])  # At least one number must be different
@@ -89,9 +89,9 @@ def solve_simplex():
     result2 = linprog(c=np.zeros(729), A_eq=A_new, b_eq=b_new, method="highs")
     if not result2.success:
         print("Second linear programming problem did not succeed.")
-        generate();
-        solve_simplex();
-        return;
+        generate()
+        solve_simplex()
+        return
     print(result2)
 
 def is_valid_move(board, row, col, num):
