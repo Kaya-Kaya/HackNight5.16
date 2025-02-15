@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import json
 from scipy.optimize import linprog
 given_numbers = []
 # Cell Constraint
@@ -47,12 +48,12 @@ for box_x in range(3):
                     col = cell_x * 81 + cell_y * 9 + k  # Variable index
                     A_box[row, col] = 1
 def solve_simplex(empty_cells):
-
+    sudoku_board = generate(empty_cells)
     #Pre-filled numbers constraint
     A_fixed = np.zeros((len(given_numbers), 729))  
     b_fixed = np.ones(len(given_numbers))  
     
-    print(given_numbers)
+    # print(given_numbers)
     
     for idx, (r, c, v) in enumerate(given_numbers):
         col = r * 81 + c * 9 + (v - 1)
@@ -63,13 +64,13 @@ def solve_simplex(empty_cells):
     
     result = linprog(c=np.zeros(729), A_eq=A, b_eq=b, method="highs")
     if not result.success:
-        print("Initial linear programming problem did not succeed.")
+        # print("Initial linear programming problem did not succeed.")
         generate(empty_cells)
         return solve_simplex(empty_cells)
     first_solution = np.round(result.x).astype(int)
     
     if not np.all(np.isclose(result.x, np.round(result.x))):
-        print("Fractional values found. The puzzle has multiple solutions.")
+        # print("Fractional values found. The puzzle has multiple solutions.")
         generate(empty_cells)
         return solve_simplex(empty_cells)
     
@@ -88,10 +89,11 @@ def solve_simplex(empty_cells):
     method="highs"
 )
     if result2.success:
-        print("Second linear programming problem succeeded.")
+        # print("Second linear programming problem succeeded.")
         generate(empty_cells)
         return solve_simplex(empty_cells)
-    return reshape_board(extract_board(first_solution))
+    solved_board = reshape_board(extract_board(first_solution))
+    return overlay_givens(solved_board, given_numbers)
 
 def is_valid_move(board, row, col, num):
     """Check if num can be placed in board[row][col] without breaking Sudoku rules."""
@@ -137,7 +139,7 @@ def generate(empty_cells):
     for i in range(empty_cells):
         row, col = divmod(cells.pop(), 9)
         board[row, col] = 0
-    print(board)
+    # print(board)
     for row in range(9):
         for col in range(9):
             if board[row, col] != 0:
@@ -158,7 +160,17 @@ def extract_board(solution_vector):
         digit = np.argmax(block) + 1
         board[row, col] = digit
     return board
+def overlay_givens(solved_board, given_numbers):
+    """
+    Sets non-given cells to 0
+    """
+    masked_board = np.zeros((9, 9), dtype=int)
+    for (r, c, v) in given_numbers:
+        masked_board[r, c] = v
+    return masked_board
 
-empty_cells = 40
-generate(empty_cells)
-solve_simplex(empty_cells)
+if __name__ == "__main__":
+    empty_cells = 40
+    generate(empty_cells)
+    board = solve_simplex(empty_cells)
+    print(json.dumps(board.tolist()))
