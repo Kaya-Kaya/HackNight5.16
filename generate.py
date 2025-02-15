@@ -92,8 +92,8 @@ def solve_simplex(empty_cells):
         # print("Second linear programming problem succeeded.")
         generate(empty_cells)
         return solve_simplex(empty_cells)
-    solved_board = reshape_board(extract_board(first_solution))
-    return overlay_givens(solved_board, given_numbers)
+    hidden_board = overlay_givens(extract_board(first_solution), given_numbers)
+    return reshape_board(hidden_board)
 
 def is_valid_move(board, row, col, num):
     """Check if num can be placed in board[row][col] without breaking Sudoku rules."""
