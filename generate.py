@@ -78,11 +78,6 @@ def solve_simplex(empty_cells):
         if first_solution[i] == 1:
             A_exclude[0, i] = 1
     b_exclude = np.array([80])
-
-
-    # Add to the constraints
-    A_new = np.vstack((A, A_exclude))
-    b_new = np.hstack((b, b_exclude))
     
     result2 = linprog(
     c=np.zeros(729),
@@ -96,7 +91,6 @@ def solve_simplex(empty_cells):
         print("Second linear programming problem succeeded.")
         generate(empty_cells)
         return solve_simplex(empty_cells)
-    print(result2)
     return reshape_board(extract_board(first_solution))
 
 def is_valid_move(board, row, col, num):
