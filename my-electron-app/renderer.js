@@ -11,3 +11,8 @@ generateButton.addEventListener('click', async () => {
         }
     }
 });
+
+const slider = document.getElementById('myRange');
+slider.oninput = function() {
+    document.documentElement.style.setProperty('--fill-amount', `${slider.value * 100 / slider.max}%`);
+}
