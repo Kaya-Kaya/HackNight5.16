@@ -152,5 +152,6 @@ def generate(empty_cells):
                 given_numbers.append((row, col, int(board[row, col])))
     return board
 
-generate(40)
-solve_simplex(40)
+empty_cells = 40
+generate(empty_cells)
+solve_simplex(empty_cells)
