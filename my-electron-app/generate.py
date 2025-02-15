@@ -100,7 +100,7 @@ def solve_simplex(empty_cells):
         solve_simplex(empty_cells)
         return
     print(result2)
-
+    return first_solution.reshape((9, 9))
 def is_valid_move(board, row, col, num):
     """Check if num can be placed in board[row][col] without breaking Sudoku rules."""
     # Check the row
