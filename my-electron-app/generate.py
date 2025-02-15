@@ -65,15 +65,13 @@ def solve_simplex(empty_cells):
     if not result.success:
         print("Initial linear programming problem did not succeed.")
         generate(empty_cells)
-        solve_simplex()
-        return
+        return solve_simplex(empty_cells)
     first_solution = np.round(result.x).astype(int)
     
     if not np.all(np.isclose(result.x, np.round(result.x))):
         print("Fractional values found. The puzzle has multiple solutions.")
         generate(empty_cells)
-        solve_simplex()
-        return
+        return solve_simplex(empty_cells)
     
     A_exclude = np.zeros((1, 729))
     for i in range(729):
@@ -97,10 +95,10 @@ def solve_simplex(empty_cells):
     if result2.success:
         print("Second linear programming problem succeeded.")
         generate(empty_cells)
-        solve_simplex(empty_cells)
-        return
+        return solve_simplex(empty_cells)
     print(result2)
-    return first_solution.reshape((9, 9))
+    return reshape_board(extract_board(first_solution))
+
 def is_valid_move(board, row, col, num):
     """Check if num can be placed in board[row][col] without breaking Sudoku rules."""
     # Check the row
@@ -150,6 +148,21 @@ def generate(empty_cells):
         for col in range(9):
             if board[row, col] != 0:
                 given_numbers.append((row, col, int(board[row, col])))
+    return board
+
+def reshape_board(board):
+    reshaped_board = board.reshape(3, 3, 3, 3)
+    reshaped_board = reshaped_board.transpose((0, 2, 1, 3))
+    reshaped_board = reshaped_board.reshape(9, 9)
+    return reshaped_board
+
+def extract_board(solution_vector):
+    board = np.zeros((9, 9), dtype=int)
+    for cell in range(81):
+        row, col = divmod(cell, 9)
+        block = solution_vector[cell*9:(cell+1)*9]
+        digit = np.argmax(block) + 1
+        board[row, col] = digit
     return board
 
 empty_cells = 40
