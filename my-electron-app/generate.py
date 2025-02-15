@@ -46,7 +46,7 @@ for box_x in range(3):
                     cell_y = box_y * 3 + j
                     col = cell_x * 81 + cell_y * 9 + k  # Variable index
                     A_box[row, col] = 1
-def solve_simplex():
+def solve_simplex(empty_cells):
 
     #Pre-filled numbers constraint
     A_fixed = np.zeros((len(given_numbers), 729))  
@@ -64,33 +64,40 @@ def solve_simplex():
     result = linprog(c=np.zeros(729), A_eq=A, b_eq=b, method="highs")
     if not result.success:
         print("Initial linear programming problem did not succeed.")
-        generate()
+        generate(empty_cells)
         solve_simplex()
         return
     first_solution = np.round(result.x).astype(int)
     
     if not np.all(np.isclose(result.x, np.round(result.x))):
         print("Fractional values found. The puzzle has multiple solutions.")
-        generate()
+        generate(empty_cells)
         solve_simplex()
         return
     
-    A_exclude = np.zeros((1, 729))  # New constraint row
-    b_exclude = np.array([1])  # At least one number must be different
-
+    A_exclude = np.zeros((1, 729))
     for i in range(729):
         if first_solution[i] == 1:
-            A_exclude[0, i] = 1  # Ensuring at least one is different
+            A_exclude[0, i] = 1
+    b_exclude = np.array([80])
+
 
     # Add to the constraints
     A_new = np.vstack((A, A_exclude))
     b_new = np.hstack((b, b_exclude))
     
-    result2 = linprog(c=np.zeros(729), A_eq=A_new, b_eq=b_new, method="highs")
+    result2 = linprog(
+    c=np.zeros(729),
+    A_eq=A,
+    b_eq=b,
+    A_ub=A_exclude,
+    b_ub=b_exclude,
+    method="highs"
+)
     if result2.success:
-        print("Second linear programming problem did not succeed.")
-        generate()
-        solve_simplex()
+        print("Second linear programming problem succeeded.")
+        generate(empty_cells)
+        solve_simplex(empty_cells)
         return
     print(result2)
 
@@ -124,7 +131,7 @@ def solve_board(board):
                 return False  
     return True  
 
-def generate(empty_cells = 40):
+def generate(empty_cells):
     given_numbers.clear()
     board = np.zeros((9, 9), dtype=int)
     for i in range(0, 9, 3):
@@ -145,5 +152,5 @@ def generate(empty_cells = 40):
                 given_numbers.append((row, col, int(board[row, col])))
     return board
 
-generate()
-solve_simplex()
+generate(40)
+solve_simplex(40)
