@@ -12,7 +12,7 @@ generateButton.addEventListener('click', async () => {
     }
 });
 
-const slider = document.getElementById('myRange');
+const slider = document.getElementById('difficulty-slider');
 slider.oninput = function() {
     document.documentElement.style.setProperty('--fill-amount', `${slider.value * 100 / slider.max}%`);
 }
